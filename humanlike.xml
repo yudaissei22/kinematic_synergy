@@ -16,7 +16,7 @@
          <geom name="link2" type="mesh" mesh="ball-joint" mass="1" rgba="0 0 1 1"/>
          <joint name="joint2" type="hinge" axis="1 0 0" limited="true" range="-1.57 1.57"/> 
          <body name="link3" pos="0 0 0.6">
-           <geom name="link3" type="mesh" mesh="hand" mass="1" rgba="0 0 1 1"/>
+           <geom name="link3" type="mesh" mesh="hand" mass="1" rgba="1 1 1 1"/>
            <joint name="joint3" type="hinge" axis="1 0 0" limited="true" range="-1.57 1.57"/>
          </body>
        </body>
