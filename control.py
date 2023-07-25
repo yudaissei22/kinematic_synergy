@@ -13,6 +13,7 @@ def torque_controller():
   #求めたトルクを代入するとこ
     data.actuator(0).ctrl[:] = 0
     data.actuator(1).ctrl[:] = 0
+    data.actuator(2).ctrl[:] = 0
     mujoco.mj_step(model, data)
     view.sync()
   
