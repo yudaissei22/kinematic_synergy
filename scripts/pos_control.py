@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 
 
-model = mujoco.MjModel.from_xml_path("scene.xml")
+model = mujoco.MjModel.from_xml_path("../models/scene.xml")
 data = mujoco.MjData(model)
 view = viewer.launch_passive(model, data)
 
@@ -38,9 +38,9 @@ def syn():
       wrist.append(wrist_angle)
   #    x.append(0.02*i)
       
-      print("shoulder_angle is", shoulder)
-      print("elbow_angle is", elbow)
-      print("wrist_angle is", wrist)
+      # print("shoulder_angle is", shoulder)
+      # print("elbow_angle is", elbow)
+      # print("wrist_angle is", wrist)
       
       # move
       data.actuator(0).ctrl[:] = shoulder_angle
@@ -86,9 +86,4 @@ def test():
     mujoco.mj_step(model, data)
     view.sync()
     time.sleep(0.002)
-
-def reset():
-    data.actuator(0).ctrl[:] = 0
-    data.actuator(1).ctrl[:] = 0
-    data.actuator(2).ctrl[:] = 0
- 
+    
