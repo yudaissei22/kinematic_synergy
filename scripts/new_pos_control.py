@@ -9,12 +9,12 @@ data = mujoco.MjData(model)
 view = viewer.launch_passive(model, data)
 
 def move():
-  p1 = angle_primitive(6, 0, 30, 1, 1, 1)
-  p2 = angle_primitive(6, 30, -30, 1, -0.5, -0.5)
+  pr1 = angle_primitive(6, 0, 30, 1, 1, 1)
+  pr2 = angle_primitive(6, 30, -30, 1, -2, -2)
   new_list = np.zeros((3000,4))
   for i in range(3000):
     t = p1[i-1][0]
-    new_list[i-1][0] = t
+    new_list[i-1][0] = t 
     new_list[i-1][1] = p1[i-1][1] * np.sin(np.pi * t) + p2[i-1][1] * np.cos(np.pi * t)
     new_list[i-1][2] = p1[i-1][2] * np.sin(np.pi * t) + p2[i-1][2] * np.cos(np.pi * t)
     new_list[i-1][3] = p1[i-1][3] * np.sin(np.pi * t) + p2[i-1][3] * np.cos(np.pi * t)
@@ -37,7 +37,7 @@ def p1():
       time.sleep(0.002)
   
 def p2():
-  p2 = angle_primitive(6, 0, 60, 1, -0.5, -0.5)
+  p2 = angle_primitive(6, 0, 60, 1, -2, -2)
   for k in range(3000):
       data.actuator(0).ctrl[:] = p2[k-1][1] # shoulder 
       data.actuator(2).ctrl[:] = p2[k-1][2] # elbow
@@ -46,18 +46,6 @@ def p2():
       view.sync()
       time.sleep(0.002)
 
-
-def tmp():
-  for k in range(3000):
-      data.actuator(0).ctrl[:] = -30 
-      data.actuator(2).ctrl[:] = 15
-      data.actuator(4).ctrl[:] = 15
-      mujoco.mj_step(model, data)
-      view.sync()
-      time.sleep(0.002)
-      
-
-  
 def angle_primitive(time, initial_angle, final_angle, a, b, c):
 
   radian_initial_angle = np.pi / 180 * initial_angle
