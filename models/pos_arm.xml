@@ -25,11 +25,11 @@
  </worldbody>
 
    <actuator>
-     <position name="poscon_joint1" joint="joint1" kp="75" gear="1" ctrllimited="true" ctrlrange="-100 100"/>
-     <velocity name="velcon_joint1" joint="joint1" kv="30"/>
-     <position name="joint2" joint="joint2" kp="40" gear="1" ctrllimited="true" ctrlrange="-100 100"/>
+     <position name="poscon_joint1" joint="joint1" kp="60" ctrllimited="true" ctrlrange="-100 100"/>
+     <velocity name="velcon_joint1" joint="joint1" kv="10"/>
+     <position name="joint2" joint="joint2" kp="30" ctrllimited="true" ctrlrange="-100 100"/>
      <velocity name="velcon_joint2" joint="joint2" kv="20"/>
-     <position name="joint3" joint="joint3" kp="15" gear="1" ctrllimited="true" ctrlrange="-100 100"/>
-     <velocity name="velcon_joint3" joint="joint3" kv="5"/>
+     <position name="joint3" joint="joint3" kp="15" ctrllimited="true" ctrlrange="-100 100"/>
+     <velocity name="velcon_joint3" joint="joint3" kv="10"/>
    </actuator>
 </mujoco>

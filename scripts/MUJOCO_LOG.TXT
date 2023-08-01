@@ -1,3 +1,9 @@
 Wed Jul 26 20:37:10 2023
 WARNING: mju_openResource: unknown file 'models/scene.xml'
 
+Tue Aug  1 16:07:14 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0880.
+
+Tue Aug  1 16:13:59 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 1. The simulation is unstable. Time = 0.0900.
+
