@@ -1,0 +1,234 @@
+import time
+import mujoco
+from mujoco import viewer
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+
+model = mujoco.MjModel.from_xml_path("models/scene.xml")
+data = mujoco.MjData(model)
+view = viewer.launch_passive(model, data)
+
+def move(l):
+  pr1 = angle_primitive(6, 0, 60, 1, 1)
+  pr2 = angle_primitive(6, 0, 60, -2, -2)
+
+  print(pr1)
+  print(pr2)
+  new_list = np.zeros((3000,4))
+  q = np.zeros((3000,4))
+  if l == 0:
+    for i in range(3000):
+      t = i / 500
+      new_list[i-1][0] = t 
+      new_list[i-1][1] = pr1[i-1][1] * np.sin(np.pi * t) + pr2[i-1][1] * np.cos(np.pi * t)
+      new_list[i-1][2] = pr1[i-1][2] * np.sin(np.pi * t) + pr2[i-1][2] * np.cos(np.pi * t)
+      new_list[i-1][3] = pr1[i-1][3] * np.sin(np.pi* t) + pr2[i-1][3] * np.cos(np.pi * t)
+      
+  if l == 1:
+    for i in range(3000):
+      t = i / 500
+      new_list[i-1][0] = t 
+      new_list[i-1][1] = pr1[i-1][1]
+      new_list[i-1][2] = pr1[i-1][2]
+      new_list[i-1][3] = pr1[i-1][3] 
+  if l == 2:
+     for i in range(3000):
+      t = i / 500
+      new_list[i-1][0] = t 
+      new_list[i-1][1] = pr2[i-1][1]
+      new_list[i-1][2] = pr2[i-1][2]
+      new_list[i-1][3] = pr2[i-1][3] 
+      
+  for t in range(3000):
+    data.actuator(0).ctrl[:] = new_list[t-1][1] # shoulder 
+    data.actuator(2).ctrl[:] = new_list[t-1][2] # elbow
+    data.actuator(4).ctrl[:] = new_list[t-1][3] # wrist
+   
+    q[t][0] = data.qpos[0] 
+    q[t][1] = data.qpos[1] 
+    q[t][2] = data.qpos[2] 
+    mujoco.mj_step(model, data)
+    view.sync()
+    time.sleep(0.002)
+
+
+  x = new_list[:,1]
+  y = new_list[:,2]
+  z = new_list[:,3]
+  
+  # plt.title('肩の角度と時間')
+  # plt.xlabel('時間')
+  # plt.ylabel('肩の角度')
+  # plt.plot(x, y, color="red", marker="o", label="arrau element")
+  # plt.legend()
+  # plt.show()
+  fig = plt.figure(figsize =(8 ,8))
+
+  ax = fig.add_subplot(111, projection='3d')
+
+  # Axesのタイトルを設定
+  ax.set_title("reference each joint relationship", size = 20)
+
+  # 軸ラベルを設定
+  ax.set_xlabel("shoulder_angle", size = 14, color = "r")
+  ax.set_ylabel("elbow_angle", size = 14, color = "r")
+  ax.set_zlabel("wrist_angle", size = 14, color = "r")
+
+  ax.scatter(x, y, z, s = 40, c = "blue")
+  # plt.show()
+  x1 = q[:,0]
+  y1 = q[:,1]
+  z1 = q[:,2]
+
+  fig = plt.figure(figsize =(8 ,8))
+
+  ax = fig.add_subplot(111, projection='3d')
+
+  # Axesのタイトルを設定
+  ax.set_title("actual each joint relationship", size = 20)
+
+  # 軸ラベルを設定
+  ax.set_xlabel("shoulder_angle", size = 14, color = "r")
+  ax.set_ylabel("elbow_angle", size = 14, color = "r")
+  ax.set_zlabel("wrist_angle", size = 14, color = "r")
+
+  ax.scatter(x1, y1, z1, s = 40, c = "blue")
+
+  plt.show()  
+    
+# def move0():
+#   pr1 = angle_primitive(6, 0, 60, 1, 1, 1)
+#   pr2 = angle_primitive(6, 0, 60, 1, -2, -2)
+
+#   print(pr1)
+#   print(pr2)
+#   new_list = np.zeros((3000,4))
+#   for i in range(3000):
+#     # t = p1[i-1][0]
+#       t = i / 500
+#       new_list[i-1][0] = t 
+#       new_list[i-1][1] = pr1[i-1][1] * np.sin(np.pi * t) + pr2[i-1][1] * np.cos(np.pi * t)
+#       new_list[i-1][2] = pr1[i-1][2] * np.sin(np.pi * t) + pr2[i-1][2] * np.cos(np.pi * t)
+#       new_list[i-1][3] = pr1[i-1][3] * np.sin(np.pi * t) + pr2[i-1][3] * np.cos(np.pi * t)
+    
+#   print(new_list[3][:])
+#   for t in range(3000):
+#     data.actuator(0).ctrl[:] = new_list[t-1][1] # shoulder 
+#     # data.actuator(1).ctrl[:] = new_list[t-1][2] # elbow
+#     # data.actuator(2).ctrl[:] = new_list[t-1][3] # wrist
+#     mujoco.mj_step(model, data)
+#     view.sync()
+#     time.sleep(0.002)
+
+# def move1():
+#   pr1 = angle_primitive(6, 0, 60, 1, 1, 1)
+#   pr2 = angle_primitive(6, 0, 60, 1, -2, -2)
+
+#   print(pr1)
+#   print(pr2)
+#   new_list = np.zeros((3000,4))
+#   for i in range(3000):
+#     # t = p1[i-1][0]
+#       t = i / 500
+#       new_list[i-1][0] = t 
+#       new_list[i-1][1] = pr1[i-1][1] * np.sin(np.pi * t) + pr2[i-1][1] * np.cos(np.pi * t)
+#       new_list[i-1][2] = pr1[i-1][2] * np.sin(np.pi * t) + pr2[i-1][2] * np.cos(np.pi * t)
+#       new_list[i-1][3] = pr1[i-1][3] * np.sin(np.pi * t) + pr2[i-1][3] * np.cos(np.pi * t)
+    
+#   print(new_list[3][:])
+#   for t in range(3000):
+#    # data.actuator(0).ctrl[:] = new_list[t-1][1] # shoulder 
+#     data.actuator(1).ctrl[:] = new_list[t-1][2] # elbow
+#    # data.actuator(2).ctrl[:] = new_list[t-1][3] # wrist
+#     mujoco.mj_step(model, data)
+#     view.sync()
+#     time.sleep(0.002)
+
+
+# def move():
+#   pr1 = angle_primitive(6, 0, 60, 1, 1, 1)
+#   pr2 = angle_primitive(6, 0, 60, 1, -2, -2)
+
+#   print(pr1)
+#   print(pr2)
+#   new_list = np.zeros((3000,4))
+#   for i in range(3000):
+#     # t = p1[i-1][0]
+#       t = i / 500
+#       new_list[i-1][0] = t 
+#       new_list[i-1][1] = pr1[i-1][1] * np.sin(np.pi * t) + pr2[i-1][1] * np.cos(np.pi * t)
+#       new_list[i-1][2] = pr1[i-1][2] * np.sin(np.pi * t) + pr2[i-1][2] * np.cos(np.pi * t)
+#       new_list[i-1][3] = pr1[i-1][3] * np.sin(np.pi * t) + pr2[i-1][3] * np.cos(np.pi * t)
+    
+#   print(new_list[3][:])
+#   for t in range(3000):
+#   #  data.actuator(0).ctrl[:] = new_list[t-1][1] # shoulder 
+#   #  data.actuator(1).ctrl[:] = new_list[t-1][2] # elbow
+#     data.actuator(2).ctrl[:] = new_list[t-1][3] # wrist
+#     mujoco.mj_step(model, data)
+#     view.sync()
+#     time.sleep(0.002)
+
+    
+# # def p1():
+# #   p1 = angle_primitive(6, 0, 60, 1, 1, 1)
+# #   for t in range(3000):
+# #       data.actuator(0).ctrl[:] = p1[t-1][1] # shoulder 
+# #       data.actuator(2).ctrl[:] = p1[t-1][2] # elbow
+# #       data.actuator(4).ctrl[:] = p1[t-1][3] # wrist
+# #       mujoco.mj_step(model, data)
+# #       view.sync()
+# #       time.sleep(0.002)
+  
+# # def p2():
+# #   p2 = angle_primitive(6, 0, 60, 1, -2, -2)
+# #   for k in range(3000):
+# #       data.actuator(0).ctrl[:] = p2[k-1][1] # shoulder 
+# #       data.actuator(2).ctrl[:] = p2[k-1][2] # elbow
+# #       data.actuator(4).ctrl[:] = p2[k-1][3] # wrist
+# #       mujoco.mj_step(model, data)
+# #       view.sync()
+# #       time.sleep(0.002)
+
+def angle_primitive(time, initial_angle, final_angle, b, c):
+
+  radian_initial_angle = np.pi * initial_angle / 180
+  radian_final_angle = np.pi * final_angle / 180
+  t = time * 500
+  velo_angle = (radian_final_angle - radian_initial_angle) / time  
+  spatiotemp = np.zeros((t, 4))
+
+  for i in range(t):
+    shoulder_angle = radian_initial_angle + velo_angle * i * 0.002
+    elbow_angle = shoulder_angle * b
+    wrist_angle = shoulder_angle * c
+    spatiotemp[i][0] = i * 0.002
+    spatiotemp[i][1] = shoulder_angle 
+    spatiotemp[i][2] = elbow_angle
+    spatiotemp[i][3] = wrist_angle
+  # x = spatiotemp[:,1]
+  # y = spatiotemp[:,2]
+  # z = spatiotemp[:,3]
+  
+  # # plt.title('肩の角度と時間')
+  # # plt.xlabel('時間')
+  # # plt.ylabel('肩の角度')
+  # # plt.plot(x, y, color="red", marker="o", label="arrau element")
+  # # plt.legend()
+  # # plt.show()
+  # fig = plt.figure(figsize =(8 ,8))
+
+  # ax = fig.add_subplot(111, projection='3d')
+
+  # # Axesのタイトルを設定
+  # ax.set_title("aa", size = 20)
+
+  # # 軸ラベルを設定
+  # ax.set_xlabel("x", size = 14, color = "r")
+  # ax.set_ylabel("y", size = 14, color = "r")
+  # ax.set_zlabel("z", size = 14, color = "r")
+
+  # ax.scatter(x, y, z, s = 40, c = "blue")
+  # plt.show()
+  return spatiotemp

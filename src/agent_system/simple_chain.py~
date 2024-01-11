@@ -1,0 +1,14 @@
+import time
+import mujoco
+from mujoco import viewer
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+
+model = mujoco.MjModel.from_xml_path("models/scene_simple_chain.xml")
+# scene.xmlは、エージェントシステムのともやつと別にする
+
+data = mujoco.MjData(model)
+view = viewer.launch_passive(model, data)
+
+
