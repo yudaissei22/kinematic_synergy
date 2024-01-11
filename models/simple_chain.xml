@@ -17,19 +17,23 @@
        <body name="link2" pos="0 0 0.6">
          <geom name="link2" type="mesh" mesh="ball-joint" mass="1" rgba="0 0 1 1"/>
          <joint name="joint2" type="hinge" axis="1 0 0" limited="true" range="-3.14 3.14"/> 
-         <!-- <body name="link3" pos="0 0 0.6"> -->
-         <!--   <geom name="link3" type="mesh" mesh="hand" mass="1" rgba="1 1 1 1"/> -->
-         <!--   <joint name="joint3" type="hinge" axis="1 0 0" limited="true" range="-3.14 3.14"/> -->
-         <!-- </body> -->
+         <body name="link3" pos="0 0 0.6">
+           <geom name="link3" type="mesh" mesh="hand" mass="1" rgba="1 1 1 1"/>
+           <joint name="joint3" type="hinge" axis="1 0 0" limited="true" range="-3.14 3.14"/>
+         </body>
        </body>
      </body>
    </body>
  </worldbody>
 
    <actuator>
-     <position name="pos_joint1" joint="joint1" kp="1"  ctrllimited="true" ctrlrange="-100 100"/>
-     <!-- <velocity name="velcon_joint1" joint="joint1" kv="0.1"/> -->
-     <position name="pos_joint2" joint="joint2" kp="0.5" ctrllimited="true" ctrlrange="-100 100"/>
+     <motor name="joint1" joint="joint1" gear="100"/>
+     <motor name="joint2" joint="joint2" gear="100"/>
+     <motor name="joint3" joint="joint3" gear="100"/>
+
+     <!-- <position name="pos_joint1" joint="joint1" kp="1"  ctrllimited="true" ctrlrange="-100 100"/> -->
+     <!-- <!-\- <velocity name="velcon_joint1" joint="joint1" kv="0.1"/> -\-> -->
+     <!-- <position name="pos_joint2" joint="joint2" kp="0.5" ctrllimited="true" ctrlrange="-100 100"/> -->
      <!-- <velocity name="velcon_joint2" joint="joint2" kv="0.1"/> -->
      <!-- <position name="pos_joint3" joint="joint3" kp="0.5" ctrllimited="true" ctrlrange="-100 100"/> -->
      <!-- <velocity name="velcon_joint3" joint="joint3" kv="0.1"/> -->

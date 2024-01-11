@@ -1,0 +1,105 @@
+import time
+import mujoco
+from mujoco import viewer
+import numpy as np
+import os
+
+model = mujoco.MjModel.from_xml_path("../models/scene_simple_chain.xml")
+data = mujoco.MjData(model)
+view = viewer.launch_passive(model, data)
+
+def torque():
+  # data.actuator_force.ctrl[:] = joint1
+  # data.actuator_force.ctrl[:] = joint2
+  # data.actuator_force.ctrl[:] = joint3
+
+  for i in range(3000):
+    # data.actuator(0).force[:] = i / 3000 
+    # data.actuator(1).force[:] = i / 3000
+    # data.actuator(2).force[:] = i /3000
+    # 恐らく、ctrlで指令を送れる。これはアクチュエータの種類に関係ない。
+
+    data.actuator(0).ctrl[:] = i / 3000 
+    data.actuator(1).ctrl[:] = i / 3000
+    data.actuator(2).ctrl[:] = i / 3000
+
+
+    print(i)
+    mujoco.mj_step(model, data)
+    view.sync()
+    time.sleep(0.002)
+    print("ok")
+
+
+  
+
+
+def forward():
+  mujoco.mj_step(model, data)
+  view.sync()
+  time.sleep(0.002)
+  
+
+
+
+
+def move():
+  pr1 = angle_primitive(6, 0, 30, 1, 1, 1)
+  pr2 = angle_primitive(6, 30, -30, 1, -2, -2)
+  new_list = np.zeros((3000,4))
+  for i in range(3000):
+    t = p1[i-1][0]
+    new_list[i-1][0] = t 
+    new_list[i-1][1] = p1[i-1][1] * np.sin(np.pi * t) + p2[i-1][1] * np.cos(np.pi * t)
+    new_list[i-1][2] = p1[i-1][2] * np.sin(np.pi * t) + p2[i-1][2] * np.cos(np.pi * t)
+    new_list[i-1][3] = p1[i-1][3] * np.sin(np.pi * t) + p2[i-1][3] * np.cos(np.pi * t)
+  for t in range(3000):
+      data.actuator(0).ctrl[:] = new_list[t-1][1] # shoulder 
+      data.actuator(2).ctrl[:] = new_list[t-1][2] # elbow
+      data.actuator(4).ctrl[:] = new_list[t-1][3] # wrist
+      mujoco.mj_step(model, data)
+      view.sync()
+      time.sleep(0.002)
+
+def p1():
+  p1 = angle_primitive(6, 0, 60, 1, 1, 1)
+  for t in range(3000):
+      data.actuator(0).ctrl[:] = p1[t-1][1] # shoulder 
+      data.actuator(2).ctrl[:] = p1[t-1][2] # elbow
+      data.actuator(4).ctrl[:] = p1[t-1][3] # wrist
+      mujoco.mj_step(model, data)
+      view.sync()
+      time.sleep(0.002)
+  
+def p2():
+  p2 = angle_primitive(6, 0, 60, 1, -2, -2)
+  for k in range(3000):
+      data.actuator(0).ctrl[:] = p2[k-1][1] # shoulder 
+      data.actuator(2).ctrl[:] = p2[k-1][2] # elbow
+      data.actuator(4).ctrl[:] = p2[k-1][3] # wrist
+      mujoco.mj_step(model, data)
+      view.sync()
+      time.sleep(0.002)
+
+def angle_primitive(time, initial_angle, final_angle, a, b, c):
+
+  radian_initial_angle = np.pi / 180 * initial_angle
+  radian_final_angle = np.pi / 180 * final_angle
+  t = int(time * 500)
+  velo_angle = (radian_final_angle - radian_initial_angle) / t  
+  spatiotemp = np.zeros((t, 4))
+
+  for i in range(t):
+    j = i * 0.002
+    shoulder_angle = radian_initial_angle * velo_angle * j
+    elbow_angle = shoulder_angle * b / a
+    wrist_angle = shoulder_angle * b / a
+    spatiotemp[i-1][0] = j
+    spatiotemp[i-1][1] = shoulder_angle 
+    spatiotemp[i-1][2] = elbow_angle
+    spatiotemp[i-1][3] = wrist_angle
+
+  return spatiotemp
+
+
+
